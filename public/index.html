@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en-NZ">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Clearspan Install Calculator</title>
+<meta name="theme-color" content="#101820">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Install Calc">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" href="/icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@600;700&display=swap">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
+<link rel="stylesheet" href="/styles.css?v=c7ff990b">
+</head>
+<body>
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand"><span id="brandMark"><b>UGS<span>·</span></b></span><small>Clearspan install calculator</small></div>
+    <span class="mode" id="modeChip">Loading rates…</span>
+    <nav class="tabs" role="tablist">
+      <button id="tabQuote" role="tab" aria-selected="true" data-view="quote">Quote</button>
+      <button id="tabAdmin" role="tab" aria-selected="false" data-view="admin">Admin</button>
+    </nav>
+  </div>
+</header>
+
+<main class="app">
+  <div id="banner"></div>
+
+  <!-- Staff PIN gate (only when the server asks for one) -->
+  <section id="pinView" class="panel login" hidden>
+    <h2>Staff PIN</h2>
+    <form id="pinForm" class="field">
+      <label for="pinInput">Enter the staff PIN to load current rates</label>
+      <input id="pinInput" type="password" inputmode="numeric" autocomplete="off">
+      <button class="btn primary" type="submit">Unlock</button>
+      <p class="err" id="pinErr"></p>
+    </form>
+  </section>
+
+  <!-- QUOTE -->
+  <section id="quoteView" class="quote" hidden>
+    <div class="col">
+      <div class="panel">
+        <h2>Job</h2>
+        <div class="row2">
+          <div class="field"><label for="f_ref">Customer / job reference</label><input id="f_ref" type="text" data-field="ref" autocomplete="off" placeholder="e.g. Smith – Hobsonville"></div>
+          <div class="field"><label for="f_address">Site address</label><input id="f_address" type="text" data-field="address" autocomplete="off" placeholder="Shown on the customer summary"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Structure</h2>
+        <div class="field">
+          <span class="lbl">Mounting</span>
+          <div class="seg" id="seg_mount" data-field="mount"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label for="f_width">Width along house / front (m)</label>
+            <div class="stepper"><button type="button" data-step="width" data-d="-0.1" aria-label="Decrease width">−</button><input id="f_width" type="number" inputmode="decimal" step="0.1" min="0" data-field="width"><button type="button" data-step="width" data-d="0.1" aria-label="Increase width">+</button></div>
+          </div>
+          <div class="field"><label for="f_projection">Projection / depth (m)</label>
+            <div class="stepper"><button type="button" data-step="projection" data-d="-0.1" aria-label="Decrease projection">−</button><input id="f_projection" type="number" inputmode="decimal" step="0.1" min="0" data-field="projection"><button type="button" data-step="projection" data-d="0.1" aria-label="Increase projection">+</button></div>
+          </div>
+        </div>
+        <div class="area" id="areaLine"></div>
+        <div class="field" id="row_substrate"><label for="f_substrate">Wall substrate</label><select id="f_substrate" data-field="substrate"></select><span class="hint">Changes wall-fixing and flashing time.</span></div>
+        <div class="yn" id="row_block"><div><b>Soffit blocking required?</b><div class="hint">Extra framing in the eave to take the fixings.</div></div><div class="seg" data-field="soffitBlocking" data-bool></div></div>
+        <div class="field"><label for="f_postsOverride">Number of posts – override</label><input id="f_postsOverride" type="number" inputmode="numeric" min="0" step="1" data-field="postsOverride" placeholder="Auto"><span class="hint" id="postsHint"></span></div>
+      </div>
+
+      <div class="panel">
+        <h2>Foundations &amp; access</h2>
+        <div class="row2">
+          <div class="field"><label for="f_foundation">Foundation type</label><select id="f_foundation" data-field="foundation"></select><span class="hint" id="foundHint"></span></div>
+          <div class="field"><label for="f_access">Access equipment</label><select id="f_access" data-field="access"></select></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Gutters</h2>
+        <div class="row2">
+          <div class="field"><label for="f_gutter">Gutter length (lm)</label><input id="f_gutter" type="number" inputmode="decimal" min="0" step="0.1" data-field="gutter"></div>
+          <div class="field"><label for="f_downpipes">Downpipes</label><input id="f_downpipes" type="number" inputmode="numeric" min="0" step="1" data-field="downpipes"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Site &amp; travel</h2>
+        <div class="field"><label for="f_km">One-way road distance from Kumeu (km)</label><input id="f_km" type="number" inputmode="decimal" min="0" step="1" data-field="km"><span class="hint" id="zoneHint"></span></div>
+        <div class="yn"><div><b>Island or ferry site?</b><div class="hint">Waiheke etc. – priced on application.</div></div><div class="seg" data-field="island" data-bool></div></div>
+        <div class="yn"><div><b>Charge a site measure visit?</b></div><div class="seg" data-field="chargeMeasure" data-bool></div></div>
+      </div>
+
+      <div class="panel">
+        <h2>Compliance</h2>
+        <div class="yn"><div><b>Ground level?</b><div class="hint">Attached: at ground level of the building. Freestanding: one storey, up to 3.5 m high.</div></div><div class="seg" data-field="ground" data-bool></div></div>
+        <div class="yn"><div><b>Over an area the public can use?</b><div class="hint">Cafe, bar, restaurant or other business open to the public.</div></div><div class="seg" data-field="publicArea" data-bool></div></div>
+        <div class="yn"><div><b>Residential building?</b></div><div class="seg" data-field="residential" data-bool></div></div>
+        <div class="yn" id="row_clear"><div><b>At least its own height from the house and every boundary?</b><div class="hint">Needed for the detached-building exemptions.</div></div><div class="seg" data-field="clearOfHouse" data-bool></div></div>
+        <div class="yn"><div><b>Covered by UGS engineer design?</b><div class="hint">Only if a CPEng has designed or reviewed this exact configuration.</div></div><div class="seg" data-field="cpengCovers" data-bool></div></div>
+        <div class="field"><label for="f_routeOverride">Compliance route</label><select id="f_routeOverride" data-field="routeOverride"></select></div>
+      </div>
+    </div>
+
+    <aside class="price" id="priceCol" aria-live="polite"></aside>
+  </section>
+
+  <!-- ADMIN -->
+  <section id="adminView" hidden>
+    <div id="adminLogin" class="panel login" hidden>
+      <h2>Admin sign-in</h2>
+      <form id="adminForm" class="field">
+        <label for="adminPw">Admin password</label>
+        <input id="adminPw" type="password" autocomplete="current-password">
+        <button class="btn primary" type="submit">Sign in</button>
+        <p class="err" id="adminErr"></p>
+      </form>
+    </div>
+    <div id="adminEditor" hidden>
+      <div class="preview" id="adminPreview"></div>
+      <div class="atabs" role="tablist" id="adminTabs"></div>
+      <div id="adminTable"></div>
+    </div>
+  </section>
+</main>
+
+<div class="savebar" id="saveBar" hidden>
+  <div class="savebar-in">
+    <span class="status" id="saveStatus"></span>
+    <label class="btn filebtn" for="importFile">Import backup<input id="importFile" type="file" accept="application/json,.json"></label>
+    <button class="btn" id="exportBtn" type="button">Export backup</button>
+    <button class="btn danger" id="resetBtn" type="button">Reset to defaults</button>
+    <button class="btn" id="discardBtn" type="button">Discard changes</button>
+    <button class="btn primary" id="saveBtn" type="button">Save rates</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+<div id="printView"></div>
+
+<script src="/engine.js?v=c7ff990b"></script>
+<script src="/app.js?v=c7ff990b"></script>
+</body>
+</html>

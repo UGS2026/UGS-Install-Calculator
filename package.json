@@ -1,0 +1,12 @@
+{
+  "name": "ugs-install-calculator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "UGS Clearspan installation & assembly calculator (iPad web app + admin rates)",
+  "dependencies": {
+    "@netlify/blobs": "^10.7.13"
+  },
+  "scripts": {
+    "test": "node tests/engine.test.cjs"
+  }
+}
